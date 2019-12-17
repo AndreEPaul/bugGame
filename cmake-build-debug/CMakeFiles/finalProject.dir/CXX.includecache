@@ -1,0 +1,46 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/cygdrive/c/Users/Andre/Desktop/OSUcourses/CS 162/projects/finalProject/Die.hpp
+
+/cygdrive/c/Users/Andre/Desktop/OSUcourses/CS 162/projects/finalProject/Lettuce.hpp
+Space.hpp
+/cygdrive/c/Users/Andre/Desktop/OSUcourses/CS 162/projects/finalProject/Space.hpp
+
+/cygdrive/c/Users/Andre/Desktop/OSUcourses/CS 162/projects/finalProject/Menu.cpp
+Menu.hpp
+/cygdrive/c/Users/Andre/Desktop/OSUcourses/CS 162/projects/finalProject/Menu.hpp
+Puddle.hpp
+/cygdrive/c/Users/Andre/Desktop/OSUcourses/CS 162/projects/finalProject/Puddle.hpp
+Rock.hpp
+/cygdrive/c/Users/Andre/Desktop/OSUcourses/CS 162/projects/finalProject/Rock.hpp
+Lettuce.hpp
+/cygdrive/c/Users/Andre/Desktop/OSUcourses/CS 162/projects/finalProject/Lettuce.hpp
+iostream
+-
+
+/cygdrive/c/Users/Andre/Desktop/OSUcourses/CS 162/projects/finalProject/Menu.hpp
+Space.hpp
+/cygdrive/c/Users/Andre/Desktop/OSUcourses/CS 162/projects/finalProject/Space.hpp
+string
+-
+stack
+-
+
+/cygdrive/c/Users/Andre/Desktop/OSUcourses/CS 162/projects/finalProject/Puddle.hpp
+Space.hpp
+/cygdrive/c/Users/Andre/Desktop/OSUcourses/CS 162/projects/finalProject/Space.hpp
+
+/cygdrive/c/Users/Andre/Desktop/OSUcourses/CS 162/projects/finalProject/Rock.hpp
+Space.hpp
+/cygdrive/c/Users/Andre/Desktop/OSUcourses/CS 162/projects/finalProject/Space.hpp
+
+/cygdrive/c/Users/Andre/Desktop/OSUcourses/CS 162/projects/finalProject/Space.hpp
+Die.hpp
+/cygdrive/c/Users/Andre/Desktop/OSUcourses/CS 162/projects/finalProject/Die.hpp
+
