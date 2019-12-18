@@ -6,8 +6,7 @@ Description:    This is the implement file for the
                 Menu class. It reuses a lot of the Menu code
                 from previous assignments. Variations
                 have been made to validChoice() and 
-                start(). Overall, this handles all of
-                the user I/O and input validation.
+                start(). All the gameflow is in start().
                 Uses Spaces for the game board and a 
                 stack for the game container of items.
 ************************************************/
@@ -35,21 +34,14 @@ void Menu::start()
     this->roundCount = 1;
     this->health = 10;
 
-    // Initialize board. 
-    Rock rock1;
-    Rock rock2;
-    Puddle puddle1;
-    Puddle puddle2;
-    Lettuce lettuce1;
-    Lettuce lettuce2;
-
+    // Board initialization.
     // Make some temp ptrs to assist in building board.
-    Space* ptrToRock1 = &rock1;
-    Space* ptrToRock2 = &rock2;
-    Space* ptrToPuddle1 = &puddle1;
-    Space* ptrToPuddle2 = &puddle2;
-    Space* ptrToLettuce1 = &lettuce1;
-    Space* ptrToLettuce2 = &lettuce2;
+    Space* ptrToRock1 = &(this->rock1);
+    Space* ptrToRock2 = &(this->rock2);
+    Space* ptrToPuddle1 = &(this->puddle1);
+    Space* ptrToPuddle2 = &(this->puddle2);
+    Space* ptrToLettuce1 = &(this->lettuce1);
+    Space* ptrToLettuce2 = &(this->lettuce2);
 
     // Adjust all the space ptrs as needed.
     // Desired board is as follows:
@@ -92,60 +84,20 @@ void Menu::start()
     // All the other ptrs in each space defaulted to nullptr upon
     // instantiation, so no need to adjust further. 
 
-    // Use another space ptr to traverse the board.
-    Space* spotInBoard = nullptr;
-
     // game STARTS at rock1.
-    spotInBoard = ptrToRock1;
+    this->spotInBoard = ptrToRock1;
 
     // Gameflow.
     this->printMain();
 
     while(this->health > 0 && this->roundCount < 10)
     {
-        switch(spotInBoard->getType())
-        {
-            case ARock:
-            {
-                this->printRock();
-                break;
-            }
-            case HeadOfLettuce:
-            {
-                this->printLettuce();
-                this->health += spotInBoard->healthAffect();
-                break;
-            }
-            case BigPuddle:
-            {
-                this->printPuddle();
-                Item localItem = Nothing;
-                if(!this->itemBag.empty())
-                {
-                    localItem = this->itemBag.top();
-                }
-
-                if(localItem == BeetleShell)
-                {
-                    cout << "What luck! You were able to use the beetle shell like a boat \n";
-                    cout << "to float safely on the puddle." << endl;
-                    this->itemBag.pop();
-                }
-                else
-                {
-                    // Puddle makes you lose health.
-                    this->health += spotInBoard->healthAffect();
-                }
-                break;
-            }
-            default:
-                break;
-        }
+        this->spaceOccurence();
         
-        bool checkedForItem = false;
+        this->checkedForItem = false;
+
         do
         {
-
             // Asks for action to be made.
             this->printSpaceChoice();
             this->readInString();
@@ -160,194 +112,64 @@ void Menu::start()
             int choice = this->stringToInt();
             // Moving is a special case.
 
-            switch(choice)
-            {
-                case 1:
-                {
-                    if(this->fullBag())
-                    {
-                        cout << "You can't carry any more items!" << endl;
-                    }
-                    else if(checkedForItem)
-                    {
-                        cout << "You already checked this space for an item today." << endl;
-                    }
-                    else
-                    {
-                        // localitem gets whatever the item is in the space.
-                        // Then we need to generate a new one and change
-                        // checkedForItem to true.
-                        Item localItem = spotInBoard->getItem();
-                        spotInBoard->generateItem();
-                        checkedForItem = true;
+            this->menuChoice(choice);
 
-                        switch(localItem)
-                        {
-                            case Nothing:
-                            {
-                                cout << "There's nothing here!" << endl;
-                                break;
-                            }
-                            case Ant:
-                            {
-                                cout << "Uh oh! It's an ant, and it is not happy that you got in its way!\n";
-                                cout << "You're able to get away, but lost some health in the process." << endl;
-                                this->health -= 3;
-                                break;
-                            }
-                            case Blueberry:
-                            {
-                                cout << "Yum! Looks like some sort of berry. You put it on your back \n";
-                                cout << "to save for later." << endl;
-                                this->itemBag.push(Blueberry);
-                                break;
-                            }
-                            case BeetleShell:
-                            {
-                                cout << "Interesting... looks like some sort of beetle exoskeleton. You're\n";
-                                cout << "not sure if it could be of use to you, but you bring it along anyway." << endl;
-                                this->itemBag.push(BeetleShell);
-                                break;
-                            }
-                            case Poisonberry:
-                            {
-                                cout << "Yum! Looks like some sort of berry. You put it on your back \n";
-                                cout << "to save for later." << endl;
-                                this->itemBag.push(Poisonberry);
-                                break;                                
-                            }
-                            case Grass:
-                            {
-                                cout << "It's just a blade of grass, but this is still nutritious.\n";
-                                cout << "You save it for eating later." << endl;
-                                this->itemBag.push(Grass);
-                                break;
-                            }
-                            default:
-                                break;       
-                        }
-                    }
-                    break;    
-                }
-                case 2:
-                {
-                    if(this->itemBag.empty())
-                    {
-                        cout << "You don't have anything on your back!" << endl;
-                    }
-                    else
-                    {
-                        // "peeking" at the top of the stack
-                        const Item localItem = this->itemBag.top();
-
-                        switch(localItem)
-                        {
-                            case Blueberry:
-                            {
-                                cout << "Mmmm, it's a blueberry. You munch on it and gain some health!" << endl;
-                                this->health += 1;
-                                this->itemBag.pop();
-                                break;
-                            }
-                            case BeetleShell:
-                            {
-                                cout << "It's just the beetle shell... you can't think of a way to use it, so\n";
-                                cout << "you put it back on your back." << endl;
-                                break;
-                            }
-                            case Poisonberry:
-                            {
-                                cout << "Blech!! That berry was a poisonberry. You lose some health." << endl;
-                                this->health -= 3;
-                                this->itemBag.pop();
-                                break;
-                            }
-                            case Grass:
-                            {
-                                cout << "This grass will hold you over for a little. You gain a bit of health." << endl;
-                                this->health += 1;
-                                this->itemBag.pop();
-                                break;
-                            }
-                            default:
-                                break;
-                        }
-                    }
-                    break;
-                }
-                case 4:
-                {
-                    cout << "Your health is " << this->health << "\n";
-                    cout << "It is day number " << this->roundCount << endl;
-                    break;
-                }
-                default:
-                    break;
-            }
         }while(this->getUserString() != "3");
 
 
         // If choice is "3", then user is moving spaces.
         // Loop until move is successful.
-        Space* toMove = nullptr;
-        bool notFirstChoice = false;
+        /* UPDATE: changed the pointer linked spaces to ALL
+         * point to another space. Thus, impossible to make an invalid
+         * move. So we can remove this loop.*/
 
-        while(toMove == nullptr)
+        // Use a temp ptr for moving spaces.
+        // Initialized at spotInBoard.
+        // will reinitialize every loop.
+        Space* toMove = this->spotInBoard;
+        this->printMove();
+        this->readInString();
+
+        // validate.
+        while(!this->validChoice())
         {
-            // If looped back, tell user choice is invalid.
-            if(notFirstChoice)
-            {
-                this->printEmptySpace();
-            }
-
-            // Use a temp ptr for moving spaces.
-            // Initialized at spotInBoard.
-            // will reinitialize every loop.
-            toMove = spotInBoard;
-            this->printMove();
+            this->printError();
             this->readInString();
-
-            // validate.
-            while(!this->validChoice())
-            {
-                this->printError();
-                this->readInString();
-            }
-
-            // Switch on user choice.
-            int direction = this->stringToInt();
-            switch(direction)
-            {
-                case 1:
-                {
-                    toMove = spotInBoard->getTop();
-                    break;
-                }
-                case 2:
-                {
-                    toMove = spotInBoard->getBottom();
-                    break;
-                }
-                case 3:
-                {
-                    toMove = spotInBoard->getLeft();
-                    break;
-                }
-                case 4:
-                {
-                    toMove = spotInBoard->getRight();
-                    break;
-                }
-                default:
-                    break;
-            }
-            notFirstChoice = true;
         }
+
+        // Switch on user choice.
+        int direction = this->stringToInt();
+        switch(direction)
+        {
+            case 1:
+            {
+                toMove = this->spotInBoard->getTop();
+                break;
+            }
+            case 2:
+            {
+                toMove = this->spotInBoard->getBottom();
+                break;
+            }
+            case 3:
+            {
+                toMove = this->spotInBoard->getLeft();
+                break;
+            }
+            case 4:
+            {
+                toMove = this->spotInBoard->getRight();
+                break;
+            }
+            default:
+                break;
+        }
+
         
         // Once this loop breaks, toMove points to valid space.
         // So assign as the new spotInBoard. Also, a space move
         // is a "day"
-        spotInBoard = toMove;
+        this->spotInBoard = toMove;
         this->roundCount++;
     }
 
@@ -359,6 +181,187 @@ void Menu::start()
     else
     {
         cout << "Sorry. The life of a caterpillar was simply too challenging for you. Try again!" << endl;
+    }
+}
+
+/***********************************************
+Description:    Takes in current spot in the board.
+                Switches on the space type, also
+                checks for helpful item (in case
+                of puddle). Also adjusts health.
+************************************************/
+
+void Menu::spaceOccurence()
+{
+    switch(this->spotInBoard->getType())
+    {
+        case ARock:
+        {
+            this->printRock();
+
+            break;
+        }
+        case HeadOfLettuce:
+        {
+            this->printLettuce();
+
+            this->health += this->spotInBoard->healthAffect();
+
+            break;
+        }
+        case BigPuddle:
+        {
+            this->printPuddle();
+
+            Item localItem = Nothing;
+            if(!this->itemBag.empty())
+            {
+                localItem = this->itemBag.top();
+            }
+
+            if(localItem == BeetleShell)
+            {
+                cout << "What luck! You were able to use the beetle shell like a boat \n";
+                cout << "to float safely on the puddle." << endl;
+                this->itemBag.pop();
+            }
+            else
+            {
+                // Puddle makes you lose health.
+                this->health += this->spotInBoard->healthAffect();
+            }
+            break;
+        }
+        default:
+        break;
+    }
+}
+
+void Menu::menuChoice(int choice)
+{
+    switch(choice)
+    {
+        case 1:
+        {
+            if(this->fullBag())
+            {
+                cout << "You can't carry any more items!" << endl;
+            }
+            else if(checkedForItem)
+            {
+                cout << "You already checked this space for an item today." << endl;
+            }
+            else
+            {
+                // localitem gets whatever the item is in the space.
+                // Then we need to generate a new one and change
+                // checkedForItem to true.
+                Item localItem = this->spotInBoard->getItem();
+                this->spotInBoard->generateItem();
+                this->checkedForItem = true;
+
+                switch(localItem)
+                {
+                    case Nothing:
+                    {
+                        cout << "There's nothing here!" << endl;
+                        break;
+                    }
+                    case Ant:
+                    {
+                        cout << "Uh oh! It's an ant, and it is not happy that you got in its way!\n";
+                        cout << "You're able to get away, but lost some health in the process." << endl;
+                        this->health -= 3;
+                        break;
+                    }
+                    case Blueberry:
+                    {
+                        cout << "Yum! Looks like some sort of berry. You put it on your back \n";
+                        cout << "to save for later." << endl;
+                        this->itemBag.push(Blueberry);
+                        break;
+                    }
+                    case BeetleShell:
+                    {
+                        cout << "Interesting... looks like some sort of beetle exoskeleton. You're\n";
+                        cout << "not sure if it could be of use to you, but you bring it along anyway." << endl;
+                        this->itemBag.push(BeetleShell);
+                        break;
+                    }
+                    case Poisonberry:
+                    {
+                        cout << "Yum! Looks like some sort of berry. You put it on your back \n";
+                        cout << "to save for later." << endl;
+                        this->itemBag.push(Poisonberry);
+                        break;
+                    }
+                    case Grass:
+                    {
+                        cout << "It's just a blade of grass, but this is still nutritious.\n";
+                        cout << "You save it for eating later." << endl;
+                        this->itemBag.push(Grass);
+                        break;
+                    }
+                    default:
+                        break;
+                }
+            }
+            break;
+        }
+        case 2:
+        {
+            if(this->itemBag.empty())
+            {
+                cout << "You don't have anything on your back!" << endl;
+            }
+            else
+            {
+                // "peeking" at the top of the stack
+                const Item localItem = this->itemBag.top();
+
+                switch(localItem)
+                {
+                    case Blueberry:
+                    {
+                        cout << "Mmmm, it's a blueberry. You munch on it and gain some health!" << endl;
+                        this->health += 1;
+                        this->itemBag.pop();
+                        break;
+                    }
+                    case BeetleShell:
+                    {
+                        cout << "It's just the beetle shell... you can't think of a way to use it, so\n";
+                        cout << "you put it back on your back." << endl;
+                        break;
+                    }
+                    case Poisonberry:
+                    {
+                        cout << "Blech!! That berry was a poisonberry. You lose some health." << endl;
+                        this->health -= 3;
+                        this->itemBag.pop();
+                        break;
+                    }
+                    case Grass:
+                    {
+                        cout << "This grass will hold you over for a little. You gain a bit of health." << endl;
+                        this->health += 1;
+                        this->itemBag.pop();
+                        break;
+                    }
+                    default:
+                        break;
+                }
+            }
+            break;
+        }
+        case 4:
+        {
+            cout << "Your health is " << this->health << "\n";
+            cout << "It is day number " << this->roundCount << endl;
+            break;
+        }
+        default:
+            break;
     }
 }
 
@@ -512,19 +515,13 @@ void Menu::printMove()
     cout << "4: Move to the right." << endl;
 }
 
-void Menu::printEmptySpace()
-{
-    cout << "There's nothing that way! \n";
-    cout << "Try a different direction." << endl;
-}
-
 void Menu::printError()
 {
     cout << "Invalid input. Please try again." << endl;
 }
 
 /***********************************************
-Description:    This uses stoi to conver userString
+Description:    This uses stoi to convert userString
                 into an int, then it assigns it to
                 userInt.
 ************************************************/

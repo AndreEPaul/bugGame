@@ -13,7 +13,10 @@ CMakeFiles/finalProject.dir/Menu.cpp.o: ../Rock.hpp
 CMakeFiles/finalProject.dir/Menu.cpp.o: ../Space.hpp
 
 CMakeFiles/finalProject.dir/main.cpp.o: ../Die.hpp
+CMakeFiles/finalProject.dir/main.cpp.o: ../Lettuce.hpp
 CMakeFiles/finalProject.dir/main.cpp.o: ../Menu.hpp
+CMakeFiles/finalProject.dir/main.cpp.o: ../Puddle.hpp
+CMakeFiles/finalProject.dir/main.cpp.o: ../Rock.hpp
 CMakeFiles/finalProject.dir/main.cpp.o: ../Space.hpp
 CMakeFiles/finalProject.dir/main.cpp.o: ../main.cpp
 
