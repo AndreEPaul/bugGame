@@ -1,1 +1,0 @@
-/usr/bin/c++.exe -g  -Wl,--enable-auto-import CMakeFiles/finalProject.dir/Die.cpp.o CMakeFiles/finalProject.dir/main.cpp.o CMakeFiles/finalProject.dir/Menu.cpp.o  -o finalProject.exe -Wl,--out-implib,libfinalProject.dll.a -Wl,--major-image-version,0,--minor-image-version,0 
