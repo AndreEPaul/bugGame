@@ -1,4 +1,4 @@
-# firstProject
+# bugGame
 Final project for Intro to Programming 2 in C++
 
 Text-based terminal game that utilizes inheritance and polymorphism. 
